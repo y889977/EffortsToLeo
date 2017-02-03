@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>2-18</title>
+	</head>
+	<style type="text/css">
+		#impot{
+			margin: 10px;
+			height: 130px;
+			position: relative;
+			-moz-transform:scale(1，-1);
+			transform: rotateX(180deg);
+		}
+		
+		#impot >div{
+			float: left;
+			background: red;
+			padding: 5px;
+			margin: 3px;
+		}
+	</style>
+	<body>
+		<textarea type="text" id="text"></textarea>
+		<button id="search">查询</button>
+		<textarea type="text" id="input"></textarea>
+		<button id="leftin">左入</button>
+		<button id="rightin">右入</button>
+		<button id="leftout">左出</button>
+		<button id="rightout">右出</button>
+		<button id="bubbling">排序</button>
+		<div id="impot">
+		</div>
+	</body>
+	<script type="text/javascript">
+		var input = document.getElementById('input').value,
+		    leftin = document.getElementById('leftin'),
+		    rightin = document.getElementById('rightin'),
+		    leftout = document.getElementById('leftout'),
+		    rightout = document.getElementById('rightout'),
+		    bubbling = document.getElementById('bubbling'),
+		    impot = document.getElementById('impot');
+		
+		function isNum(){
+		var input = document.getElementById('input').value;
+			if (!(/(^(?:[1-9]\d|100)$)/.test(input))){
+			alert('输入的不是整数');
+			return false;
+			}
+		};
+		
+		//左添加
+		function appendChild() {
+			var input = document.getElementById('input').value,
+			    childDiv = document.createElement('div');
+				childDiv.style.height = input + 'px';
+			impot.appendChild(childDiv,null);
+			document.getElementById('input').value = "";
+		}
+		
+		//右添加
+		function insertBefore() {
+			var input = document.getElementById('input').value,
+			    childDiv = document.createElement('div');
+				childDiv.style.height = input + 'px';
+			impot.insertBefore(childDiv,impot.children[0]);
+			document.getElementById('input').value = "";
+		}
+		
+		//左删除
+		function removeChild() {
+			impot.removeChild(impot.children[0]);
+		}
+		
+		//右删除
+		function removeLastChild() {
+			impot.removeChild(impot.lastElementChild);
+		}
+		
+		//冒泡排序
+		//获取数组
+		function getDate() {
+			var divs = impot.getElementsByTagName('div'),
+				data = [];
+				for (var i = 0 ; i < divs.length ; i++){
+					var num = Number(divs[i].style.height.substr(0,2));
+					data.push([num]);
+				}
+				return data;
+		}
+		
+		//排序
+		function sorting(data) {
+//			var	lists = data.sort(function(a,b){
+//		    	return b[0]-a[0];
+//			});
+//			return data;
+			var i = data.length , j;
+			var tempExchangVal;
+			while (i > 0) {
+				for (j =0; j < i-1; j++){
+					if (data[j] > data[j + 1]){
+						tempExchangVal = data[j];
+						data[j] = data[j + 1];
+						data[j + 1] = tempExchangVal;
+					}
+				}
+				i--;
+			}
+			return data;
+		}
+		
+		//组合
+		function render(data) {
+			var str = '';
+			var list = document.getElementById('impot');
+			data.forEach(function(num){
+		    	str+="<div style=height:"+num+"px;></div>";
+			});
+			list.innerHTML = str;
+		}
+		
+		//排序点击
+		bubbling.addEventListener('click',function(){
+			var aqiData = getDate();
+			aqiData = sorting(aqiData);
+			render(aqiData);
+		});
+		
+		//判断标签是否超过60个
+		function spanLength(){
+			var childDiv = impot.getElementsByTagName('div').length;
+			if (childDiv > 60) {
+				alert('标签太多了');
+				return false;
+			}
+		}
+		
+		
+		//四个点击事件
+		leftin.addEventListener('click',function(){
+			if(isNum() == false || spanLength() == false){
+				return false;
+			};
+			insertBefore();
+		});
+		
+		rightin.addEventListener('click',function(){
+			if(isNum() == false || spanLength() == false){
+				return false;
+			};
+			appendChild();
+			spanLength();
+		});
+		
+		leftout.addEventListener('click',function(){
+			var text = impot.children[0].style.height;
+			alert(text.substr(0,2));
+			removeChild();
+		});
+		
+		rightout.addEventListener('click',function(){
+			var text = impot.lastElementChild.style.height;
+			alert(text.substr(0,2));
+			removeLastChild();
+		});
+	
+	</script>
+</html>
