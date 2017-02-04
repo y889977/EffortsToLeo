@@ -5,244 +5,86 @@
 		<title>2-22</title>
 	</head>
 	<style type="text/css">
-		#impot{
-			margin: 10px;
-			height: 130px;
-			display: block;
+		.A{
+			width: 1000px;
+			height: 500px;
+			margin: auto;
+			display: flex;
+			background: white;	
+			border: 1px solid red;
 		}
-		
-		#impot >div{
-			background: red;
-		    vertical-align: bottom;
-		    box-sizing: border-box;
-		    margin: 5px;
-		    color: #fff;
-		    display: inline-block;
+		.B{
+			width: 450px;
+			height: 400px;
+			margin: auto;
+		    display: flex;
+		    background: white;		
+			border: 1px solid blue;
+		}
+		.C{
+			width: 200px;
+			height: 300px;
+			margin: auto;
+			display: flex;
+			background: white;	
+			border: 1px solid green;
 		}
 	</style>
 	<body>
-		<textarea name="value" id="textarea" cols="30" rows="10" placeholder="请输入10-100内的数字,可以输入多个以空格,回车,','等等分隔"></textarea>
-		<button id="leftin">左入</button>
-		<button id="rightin">右入</button>
-		<button id="leftout">左出</button>
-		<button id="rightout">右出</button>
-		<button id="bubbling">排序</button>
-		<br/><br/><br/><br/>
-		<input type="text" id="input"></input>
-		<button id="search">查询</button>
-		<div id="impot">
+		<div class="A">
+			<div class="B">
+				<div class="C"></div>
+				<div class="C"></div>
+			</div>
+			<div class="B">
+				<div class="C"></div>
+				<div class="C"></div>
+			</div>
 		</div>
+		<button type="button" id="button">Click Me!</button>
 	</body>
 	<script type="text/javascript">
-		var input = document.getElementById('input').value,
-			inputs = document.getElementById('input'),
-			textarea = document.getElementById('textarea'),
-			search = document.getElementById('search'),
-		    leftin = document.getElementById('leftin'),
-		    rightin = document.getElementById('rightin'),
-		    leftout = document.getElementById('leftout'),
-		    rightout = document.getElementById('rightout'),
-		    bubbling = document.getElementById('bubbling'),
-		    impot = document.getElementById('impot'),
-		    texts = impot.getElementsByTagName('div');
-
-		leftin.addEventListener('onkeydown',function(){
-			var e = event.srcElement;
-			if(event.keyCode == 13)
-			{
-				insertBefore();
+	var button = document.getElementById('button'),
+		treeRoot = document.getElementsByClassName('A')[0],
+		timer = null;
+	window.onload = function (){
+		button.onclick = function () {
+			reset();
+			preOrder(treeRoot);
+			changeColor();
+		}
+	}
+	//初始化颜色
+	function reset() {
+		divList = [];
+		clearInterval(timer);
+		var divs = document.getElementsByTagName('div');
+		for (var i = 0; i < divs.length; i++) {
+			divs[i].style.backgroundColor = '#fff';
+		}
+	}
+	//遍历
+	function preOrder(node) {
+		if (!(node == null)) {
+			divList.push(node);
+			preOrder(node.firstElementChild);
+			preOrder(node.lastElementChild);
+		}
+	}
+	//颜色变化函数
+	function changeColor() {
+		var i = 0;
+		divList[i].style.backgroundColor = 'blue'
+		timer = setInterval(function (argument) {
+			i++;
+			if (i < divList.length) {
+				divList[i-1].style.backgroundColor = '#fff';
+				divList[i].style.backgroundColor = 'blue';
+			} else {
+				clearInterval(timer);
+				divList[divList.length-1].style.backgroundColor = '#fff';
 			}
-		});
-		
-		//去重
-		function uniqArray(array) {
-			var result = [],
-				middle = {};
-			for(var i = 0, len = array.length; i < len; i++) {
-				if(!middle[array[i]]) {
-					middle[array[i]] = true;
-					result[result.length] = array[i];
-				}
-			}
-			return result;
-		}
-		
-		//分割数组
-		function getTrueValue(value) {
-			var trueValue = value.split(/\s|,|;|\u3001|\003B/g);
-			var resultList = uniqArray(trueValue);
-			resultList = resultList.filter(function(item) {
-				return item !== '';
-			});
-			return resultList;
-		}
-		
-		//验证text数组的正确性		
-		function getValue() {
-			var inputValue = getTrueValue(textarea.value),
-				result = [];
-			for(var i = 0, len = inputValue.length; i < len; i++) {
-//				if(inputValue[i] >= 10 && inputValue[i] <= 100) {
-					result.push(inputValue[i]);
-//				} else {
-//					alert("请输入10-100的数!");
-//					return false;
-//				}
-			}
-			console.log(result);
-			return result;
-		}
-		
-		//验证input输入数则的正确性
-		function isNum(){
-		var input = document.getElementById('input').value;
-			if (!(/(^(?:[1-9]\d|100)$)/.test(input))){
-			alert('输入的不是整数');
-			return false;
-			}
-		};
-		
-		//右添加
-		function insertBefore() {
-			var input = getValue();
-			for(var i = 0, len = input.length; i < len; i++) {
-			    childDiv = document.createElement('div');
-				childDiv.style.height = input[i] + 'px';
-				childDiv.innerHTML = input[i];
-			impot.appendChild(childDiv);
-			document.getElementById('input').value = "";
-			}
-		}
-		
-		//左添加
-		function appendChild() {
-			var old_input = getValue()
-			if(old_input != false){
-					input = old_input.reverse();
-				for(var i = 0, len = input.length; i < len; i++) {
-				    childDiv = document.createElement('div');
-					childDiv.style.height = input[i] + 'px';
-					childDiv.innerHTML = input[i];
-				impot.insertBefore(childDiv,impot.children[0]);
-				document.getElementById('input').value = "";
-				}
-			}
-		}
-		
-		//左删除
-		function removeChild() {
-			impot.removeChild(impot.children[0]);
-		}
-		
-		//右删除
-		function removeLastChild() {
-			impot.removeChild(impot.lastElementChild);
-		}
-		
-		//获取数组
-		function getDate() {
-			var divs = impot.getElementsByTagName('div'),
-				data = [];
-				for (var i = 0 ; i < divs.length ; i++){
-					var num = Number(divs[i].style.height.substr(0,2));
-					data.push([num]);
-				}
-				return data;
-		}
-		
-		//排序
-		function sorting(data) {
-//			var	lists = data.sort(function(a,b){
-//		    	return b[0]-a[0];
-//			});
-//			return data;
-			var i = data.length , j;
-			var tempExchangVal;
-			while (i > 0) {
-				for (j =0; j < i-1; j++){
-					if (data[j] > data[j + 1]){
-						tempExchangVal = data[j];
-						data[j] = data[j + 1];
-						data[j + 1] = tempExchangVal;
-					}
-				}
-				i--;
-			}
-			return data;
-		}
-		
-		//组合
-		function render(data) {
-			var str = '';
-			var list = document.getElementById('impot');
-			data.forEach(function(num){
-		    	str+="<div style=height:"+num+"px;>"+num+"</div>";
-			});
-			list.innerHTML = str;
-		}
-		
-		//排序点击
-		bubbling.addEventListener('click',function(){
-			var aqiData = getDate();
-			aqiData = sorting(aqiData);
-			render(aqiData);
-		});
-		
-		//判断标签是否超过60个
-		function spanLength(){
-			var childDiv = impot.getElementsByTagName('div').length;
-			if (childDiv > 60) {
-				alert('标签太多了');
-				return false;
-			}
-		}
-		
-		
-		//四个点击事件
-		leftin.addEventListener('click',function(){
-			spanLength();
-			appendChild();
-			
-		});
-		
-		rightin.addEventListener('click',function(){
-			spanLength();
-			insertBefore();
-		});
-		
-		leftout.addEventListener('click',function(){
-			var text = impot.children[0].style.height;
-			alert(text.substr(0,2));
-			removeChild();
-		});
-		
-		rightout.addEventListener('click',function(){
-			var text = impot.lastElementChild.style.height;
-			alert(text.substr(0,2));
-			removeLastChild();
-		});
-		//查询后改变颜色
-		function changeColor(value) {
-			var reg = new RegExp(value);
-			for(var i = 0, len = texts.length; i < len; i++) {
-				var match = reg.exec(texts[i].innerHTML);
-				if(match) {
-					texts[i].style.backgroundColor = '#0f0';
-					console.log("已找到高度为" + texts[i].style.height + "的元素!");
-				}
-			}
-		}
-		//查询
-		search.addEventListener('click',function(){
-			for(i = 0, len = texts.length; i < len; i++) {
-				if(texts[i].style.backgroundColor === "rgb(0, 255, 0)") {
-					texts[i].style.backgroundColor = '#f00';
-				}
-			}
-			var queryText = inputs.value;
-			changeColor(queryText);
-		});
-		
-	
+		},500)
+	}
 	</script>
 </html>
